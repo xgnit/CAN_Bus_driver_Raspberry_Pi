@@ -38,27 +38,23 @@ sendDriver::~sendDriver()
 
 QString sendDriver::sendByte(const int& canID, unsigned char canMsg[])
 {
-    /* parse CAN frame */
-    required_mtu = parse_canframe(canID,canMsg, &frame);
+     required_mtu = parse_canframe(canID,canMsg, &frame);
     if (!required_mtu)
         return("error with required mtu or parse");
 
     if (required_mtu > CAN_MTU) {
-        /* check if the frame fits into the CAN netdevice */
-        if (ioctl(sock, SIOCGIFMTU, &ifr) < 0)
+         if (ioctl(sock, SIOCGIFMTU, &ifr) < 0)
             return("SIOCGIFMTU");
 
         mtu = ifr.ifr_mtu;
         if (mtu != CANFD_MTU)
             return("CAN interface ist not CAN FD capable - sorry");
 
-        /* interface is ok - try to switch the socket into CAN FD mode */
-        if (setsockopt(sock, SOL_CAN_RAW, CAN_RAW_FD_FRAMES,
+         if (setsockopt(sock, SOL_CAN_RAW, CAN_RAW_FD_FRAMES,
                    &enable_canfd, sizeof(enable_canfd)))
             return("error when enabling CAN FD support");
 
-        /* ensure discrete CAN FD length values 0..8, 12, 16, 20, 24, 32, 64 */
-        frame.len = can_dlc2len(can_len2dlc(frame.len));
+         frame.len = can_dlc2len(can_len2dlc(frame.len));
     }
     if (write(sock, &frame, required_mtu) != required_mtu)
         return("write error");
@@ -86,13 +82,13 @@ int sendDriver::parse_canframe(int canID,unsigned char canMsg[], struct canfd_fr
     int maxdlen = CAN_MAX_DLEN;
     int ret = CAN_MTU;
     unsigned char tmp;
-    memset(cf, 0, sizeof(*cf)); /* init CAN FD frame, e.g. LEN = 0 */
+    memset(cf, 0, sizeof(*cf)); 
 
     cf->can_id=canID;
     for(int i=0;i<8;i++)
         cf->data[i] = canMsg[i];
 
-    cf->len =8;// dlen;
+    cf->len =8;
 
     return ret;
 }
@@ -108,7 +104,7 @@ unsigned char sendDriver:: asc2nibble(char c) {
     if ((c >= 'a') && (c <= 'f'))
         return c - 'a' + 10;
 
-    return 16; /* error */
+    return 16; 
 }
 
 int sendDriver::idx2dindex(int ifidx, int socket) {
@@ -120,8 +116,7 @@ int sendDriver::idx2dindex(int ifidx, int socket) {
         if (dindex[i] == ifidx)
             return i;
     }
-    /* remove index cache zombies first */
-    for (i=0; i < MAXIFNAMES; i++) {
+     for (i=0; i < MAXIFNAMES; i++) {
         if (dindex[i]) {
             ifr.ifr_ifindex = dindex[i];
             if (ioctl(socket, SIOCGIFNAME, &ifr) < 0)
@@ -130,7 +125,7 @@ int sendDriver::idx2dindex(int ifidx, int socket) {
     }
 
     for (i=0; i < MAXIFNAMES; i++)
-        if (!dindex[i]) /* free entry */
+        if (!dindex[i]) 
             break;
 
     if (i == MAXIFNAMES) {
