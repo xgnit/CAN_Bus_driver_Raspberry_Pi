@@ -1,5 +1,6 @@
-# in case any help/question is needed: futinn@gmail.com
 # CAN_Bus_driver_Raspberry_Pi
+
+in case any question: futinn@gmail.com
 
 enable c++11 on your compiler
 
