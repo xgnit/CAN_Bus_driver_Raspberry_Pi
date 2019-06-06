@@ -1,6 +1,5 @@
 # CAN_Bus_driver_Raspberry_Pi
 
-in case any question: futinn@gmail.com
 
 enable c++11 on your compiler
 
